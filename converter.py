@@ -1,9 +1,16 @@
 import json
+from datetime import datetime
+
+# Функция для записи действий в файл (Issue #5)
+def log_event(data):
+    with open("log.txt", "a", encoding="utf-8") as f:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"[{timestamp}] {json.dumps(data, ensure_ascii=False)}\n")
 
 def main():
     rates = {"USD": 92.5, "EUR": 100.2}
+    print("--- Микросервис Конвертации v1.4 (FINAL) ---")
     
-    print("--- Микросервис Конвертации v1.3 (Validation) ---")
     currency = input("Выберите валюту (USD или EUR): ").upper()
     
     if currency in rates:
@@ -11,35 +18,35 @@ def main():
             user_input = input(f"Введите сумму в {currency}: ")
             amount = float(user_input)
             
+            # Проверка на отрицательные числа (Issue #4)
             if amount < 0:
-                print(json.dumps({
-                    "status": "error", 
-                    "message": "Сумма не может быть отрицательной"
-                }, indent=4, ensure_ascii=False))
+                err = {"status": "error", "message": "Отрицательное число"}
+                print(json.dumps(err, indent=4, ensure_ascii=False))
+                log_event(err)
                 return
 
-            result_rub = amount * rates[currency]
+            result_rub = round(amount * rates[currency], 2)
             
+            # Ответ в JSON (Issue #3)
             response = {
                 "status": "success",
                 "data": {
                     "amount": amount,
                     "currency": currency,
-                    "result_rub": round(result_rub, 2)
+                    "result_rub": result_rub
                 }
             }
             print(json.dumps(response, indent=4, ensure_ascii=False))
+            log_event(response) # Логируем успех
             
         except ValueError:
-            print(json.dumps({
-                "status": "error", 
-                "message": "Ошибка ввода: ожидалось число"
-            }, indent=4, ensure_ascii=False))
+            err = {"status": "error", "message": "Введено не число"}
+            print(json.dumps(err, indent=4, ensure_ascii=False))
+            log_event(err)
     else:
-        print(json.dumps({
-            "status": "error", 
-            "message": "Валюта не поддерживается"
-        }, indent=4, ensure_ascii=False))
+        err = {"status": "error", "message": "Валюта не поддерживается"}
+        print(json.dumps(err, indent=4, ensure_ascii=False))
+        log_event(err)
 
 if __name__ == "__main__":
     main()
