@@ -1,4 +1,4 @@
-mport json
+import json
 
 def main():
     rates = {"USD": 92.5, "EUR": 100.2}
@@ -9,12 +9,8 @@ def main():
     if currency in rates:
         try:
             user_input = input(f"Введите сумму в {currency}: ")
-            
-            # ВАЛИДАЦИЯ (Issue #4)
-            # 1. Проверяем, что введено число
             amount = float(user_input)
             
-            # 2. Проверяем, что сумма не отрицательная
             if amount < 0:
                 print(json.dumps({
                     "status": "error", 
@@ -35,7 +31,6 @@ def main():
             print(json.dumps(response, indent=4, ensure_ascii=False))
             
         except ValueError:
-            # Обработка случая, когда ввели буквы вместо цифр
             print(json.dumps({
                 "status": "error", 
                 "message": "Ошибка ввода: ожидалось число"
