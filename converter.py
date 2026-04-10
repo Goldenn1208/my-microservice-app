@@ -1,17 +1,19 @@
 def main():
-    print("--- Микросервис Конвертации (v1.0) ---")
-    try:
-        # Принимаем запрос (сумму)
-        usd_amount = float(input("Введите сумму в USD для конвертации: "))
-        
-        # Проводим работу (логика конвертации)
-        exchange_rate = 92.5
-        rub_result = usd_amount * exchange_rate
-        
-        # Возвращаем ответ
-        print(f"Результат: {usd_amount} USD = {rub_result:.2f} RUB")
-    except ValueError:
-        print("Ошибка: Пожалуйста, введите числовое значение.")
+    # Курсы валют для задачи №2
+    rates = {"USD": 92.5, "EUR": 100.2}
 
-if __name__ == "__main__":
+    print("--- Конвертер Валют v1.1 ---")
+    currency = input("Выберите валюту (USD или EUR): ").upper()
+
+    if currency in rates:
+        try:
+            amount = float(input(f"Введите сумму в {currency}: "))
+            result = amount * rates[currency]
+            print(f"Итог: {amount} {currency} = {result:.2f} RUB")
+        except ValueError:
+            print("Ошибка: введите число!")
+    else:
+        print("Ошибка: Данная валюта не поддерживается.")
+
+if name == "main":
     main()
